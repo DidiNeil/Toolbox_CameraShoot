@@ -33,10 +33,6 @@ public class CameraShot : EditorWindow
             Transform curCam = GetEditorCamera(SceneView.GetAllSceneCameras());
             editorCam = curCam;
             DoShot( curCam);
-
-            _takescreenShot.ScreenShot();
-
-
         }
         if (GUILayout.Button("ToJson"))
         {
