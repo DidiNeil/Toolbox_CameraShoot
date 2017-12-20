@@ -13,6 +13,7 @@ public class CameraShot : EditorWindow
     #endregion
     public Transform editorCam;
     public List<Spot> _MyShotSpots=new List<Spot>();
+    public TakingScreenShot _takescreenShot = new TakingScreenShot();
 
     #region Public void
 
@@ -32,8 +33,10 @@ public class CameraShot : EditorWindow
             Transform curCam = GetEditorCamera(SceneView.GetAllSceneCameras());
             editorCam = curCam;
             DoShot( curCam);
-            
-            
+
+            _takescreenShot.ScreenShot();
+
+
         }
         if (GUILayout.Button("ToJson"))
         {
