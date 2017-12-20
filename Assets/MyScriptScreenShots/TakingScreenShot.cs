@@ -10,96 +10,106 @@ using System.IO;
 [System.Serializable]
 public class TakingScreenShot : MonoBehaviour
 {
-    public Camera myCamera;
-    public RenderTexture m_image;
-    public Texture2D m_screenshot;
-
- List<Spot> mySpotList = new List<Spot>();
- public TakingScreenShot(){
-
-     Spot myspot = new Spot();
-     myspot.angle = new Vector3(0,0,0);
-     myspot.position = new Vector3(0,2,0);
-     mySpotList.Add(myspot);
-     myspot.angle = new Vector3(1, 10, 5);
-     myspot.position = new Vector3(10, 2, 20);
-     mySpotList.Add(myspot);
-     myspot.angle = new Vector3(5, 9, 47);
-     myspot.position = new Vector3(9, 82, 70);
-     mySpotList.Add(myspot);
-     myspot.angle = new Vector3(7, 4, 2);
-     myspot.position = new Vector3(58, 55, 4);
-     mySpotList.Add(myspot);
-     myspot.angle = new Vector3(0, 0, 4);
-     myspot.position = new Vector3(89, 2, 0);
-     mySpotList.Add(myspot);
-
-     ScreenShot("C:/Users/student106/Pictures/Screen_DIDI_DIEGO_FRANçOIS", mySpotList);
+    //public Camera myCamera;
+    //public RenderTexture m_image;
+    //public Texture2D m_screenshot;
 
 
+    // ScreenShot("C:/Users/student106/Pictures/Screen_DIDI_DIEGO_FRANçOIS", mySpotList);
 
- }
+    public static void ScreenShot(string folderPath, Vector3 where, Vector3 euleurAngles) {
+
+        ScreenShot(folderPath, where, Quaternion.Euler(euleurAngles));
+    }
 
     //Prend un screenshot de la scene, en PNG
-    public void ScreenShot (string _path , List<Spot> shotSpots)
+    public static void ScreenShot (string filePath , Vector3 where, Quaternion orientation)
     {
-        //  _path = "C:/Users/student106/Pictures/Screen_DIDI_DIEGO_FRANçOIS";
+        /////INITATIONATION DES VARIABLE
+        Camera camScript = null;
+        Transform cameraTransform = null;
+        GameObject createdObject=null;
+        /////
 
-        if (!Directory.Exists(_path))
+
+        ///TRAITEMENT DES VARIABLES
+        camScript = Camera.main;
+
+        if (camScript!=null) {
+            cameraTransform = camScript.transform;
+        }
+         else
         {
-            // Try to create the directory.
-            DirectoryInfo di = Directory.CreateDirectory(_path);
+
+            GameObject cameraCreated = new GameObject("#Camera");
+            cameraTransform = cameraCreated.transform;
+            camScript = cameraCreated.AddComponent<Camera>();
         }
 
-        Instantiate(myCamera);
-      /*      
-        foreach (Spot sp in shotSpots)
-        {
-            myCamera.transform.position = sp.position;
-            myCamera.transform.eulerAngles = sp.angle;
+        cameraTransform.transform.position = where;
+        cameraTransform.transform.rotation = orientation;
 
-            Debug.Log("Taking Screenshot" + sp.position );
-
-            int resWidthN = 1920;
-            int resHeightN = 1080;
-
-            m_image = new RenderTexture(resWidthN, resHeightN, 24);
-            myCamera.targetTexture = m_image;
-
-            m_screenshot = new Texture2D(resWidthN, resHeightN, TextureFormat.RGB24, false);
-            myCamera.Render();
-            RenderTexture.active = m_image;
-            m_screenshot.ReadPixels(new Rect(0, 0, resWidthN, resHeightN), 0, 0);
-            myCamera.targetTexture = null;
-            RenderTexture.active = null;
-            byte[] bytes = m_screenshot.EncodeToPNG();
+        Debug.DrawLine(cameraTransform.transform.position, cameraTransform.transform.position + cameraTransform.transform.forward * 3, Color.red, 60);
+        ScreenCapture.CaptureScreenshot(filePath);
 
 
-            File.WriteAllBytes(_path, bytes);
-            Debug.Log(string.Format("Took screenshot to: {position}", "Screennnn" + sp.position));
-        }
 
-       
 
-      /*  SceneView.
-        var view = SceneView.currentDrawingSceneView;
-        if (view != null)
-        {
-            var target = new GameObject();
-            target.transform.position = NewCameraPosition;
-            target.transform.rotation = NewCameraRotation;
-            view.AlignViewToObject(target.transform);
-            GameObject.DestroyImmediate(target);
-        }*/
+        //////DESTRUCTION DES VARIABLES
+        if(createdObject != null)
+            Destroy(createdObject);
 
+
+        /// RETOUR DE DU RESULTAT
         
-       // string filename = ScreenShotName(resWidthN, resHeightN);
+        /*      
+          foreach (Spot sp in shotSpots)
+          {
+              myCamera.transform.position = sp.position;
+              myCamera.transform.eulerAngles = sp.angle;
+
+              Debug.Log("Taking Screenshot" + sp.position );
+
+              int resWidthN = 1920;
+              int resHeightN = 1080;
+
+              m_image = new RenderTexture(resWidthN, resHeightN, 24);
+              myCamera.targetTexture = m_image;
+
+              m_screenshot = new Texture2D(resWidthN, resHeightN, TextureFormat.RGB24, false);
+              myCamera.Render();
+              RenderTexture.active = m_image;
+              m_screenshot.ReadPixels(new Rect(0, 0, resWidthN, resHeightN), 0, 0);
+              myCamera.targetTexture = null;
+              RenderTexture.active = null;
+              byte[] bytes = m_screenshot.EncodeToPNG();
 
 
-     // Application.OpenURL(filename);
-     // Application.dataPath("");
-     // JsonUtility.ToJson();
-     // JsonUtility.FromJson("");
+              File.WriteAllBytes(_path, bytes);
+              Debug.Log(string.Format("Took screenshot to: {position}", "Screennnn" + sp.position));
+          }
+
+
+
+        /*  SceneView.
+          var view = SceneView.currentDrawingSceneView;
+          if (view != null)
+          {
+              var target = new GameObject();
+              target.transform.position = NewCameraPosition;
+              target.transform.rotation = NewCameraRotation;
+              view.AlignViewToObject(target.transform);
+              GameObject.DestroyImmediate(target);
+          }*/
+
+
+        // string filename = ScreenShotName(resWidthN, resHeightN);
+
+
+        // Application.OpenURL(filename);
+        // Application.dataPath("");
+        // JsonUtility.ToJson();
+        // JsonUtility.FromJson("");
     }
 
     public string m_lastScreenshot = "";
@@ -131,12 +141,12 @@ public class TakingScreenShot : MonoBehaviour
     */
 
 
-   /* [MenuItem("A/B &#_r")]
-    public static void FolderCreation()
-    {
-        string path = "C:/Users/student106/Pictures";
+    /* [MenuItem("A/B &#_r")]
+     public static void FolderCreation()
+     {
+         string path = "C:/Users/student106/Pictures";
 
-        //https://docs.unity3d.com/ScriptReference/Application-temporaryCachePath.html
-        Debug.Log("Hum:"+Application.temporaryCachePath);
-    }*/
+         //https://docs.unity3d.com/ScriptReference/Application-temporaryCachePath.html
+         Debug.Log("Hum:"+Application.temporaryCachePath);
+     }*/
 }
